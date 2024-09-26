@@ -1,0 +1,155 @@
+﻿@model PlanningPoker.Models.Game
+
+@{
+    ViewData["Title"] = "Join Game";
+}
+
+<h2>Join Game: @Model.Name</h2>
+
+<form id="joinForm">
+    <div>
+        <label>Your Name:</label>
+        <input type="text" id="playerName" required />
+    </div>
+    <button type="submit">Join Game</button>
+</form>
+
+<div id="waitingSection" style="display:none;">
+    <h3>Waiting for the host to start the round...</h3>
+</div>
+
+<div id="votingSection" style="display:none;">
+    <h3>Round: <span id="roundName"></span></h3>
+    <h3>Choose Your Card:</h3>
+    <div id="cards">
+        <button class="card-btn" data-card="1">1</button>
+        <button class="card-btn" data-card="2">2</button>
+        <button class="card-btn" data-card="3">3</button>
+        <button class="card-btn" data-card="5">5</button>
+        <button class="card-btn" data-card="8">8</button>
+        <button class="card-btn" data-card="13">13</button>
+        <button class="card-btn" data-card="20">20</button>
+        <button class="card-btn" data-card="coffee">Coffee</button>
+    </div>
+</div>
+
+<div id="votedPlayersSection">
+    <h3>Players Who Have Voted:</h3>
+    <ul id="votedPlayersList"></ul>
+</div>
+
+
+<h3>Votes:</h3>
+<ul id="votesList"></ul>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+<script>
+    const gameLink = "@Model.GameLink";
+    let playerName = localStorage.getItem("playerName") || "";
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/gamehub")
+        .withAutomaticReconnect()
+        .build();
+
+    function startConnection() {
+        connection.start().then(function () {
+            console.log("Connected to game hub");
+
+            connection.invoke("GetConnectionId").then(function (connectionId) {
+                document.cookie = "ConnectionId=" + connectionId + "; path=/; max-age=3600";
+
+                if (playerName) {
+                    joinGame();
+                } else {
+                    document.getElementById("joinForm").style.display = "block";
+                }
+            });
+        }).catch(function (err) {
+            console.error(err.toString());
+            setTimeout(startConnection, 5000);
+        });
+    }
+
+    startConnection();
+
+    connection.on("RoundStarted", function (roundName) {
+        alert("A new round has started: " + roundName);
+        document.getElementById("roundName").textContent = roundName;
+        document.getElementById("votingSection").style.display = "block";
+        document.getElementById("waitingSection").style.display = "none";
+
+        // Clear votes and voted players list
+        document.getElementById("votesList").innerHTML = "";
+        document.getElementById("votedPlayersList").innerHTML = "";
+
+        // Enable voting buttons
+        document.querySelectorAll(".card-btn").forEach(function (btn) {
+            btn.disabled = false;
+        });
+    });
+
+    connection.on("PlayerVoted", function (playerName) {
+        const list = document.getElementById("votedPlayersList");
+        const li = document.createElement("li");
+        li.textContent = playerName;
+        list.appendChild(li);
+    });
+
+    connection.on("VotesRevealed", function (votes) {
+        // Hide the list of players who have voted
+        document.getElementById("votedPlayersSection").style.display = "none";
+
+        // Display votes next to player names
+        const votesList = document.getElementById("votesList");
+        votesList.innerHTML = "";
+        votes.forEach(function (vote) {
+            const li = document.createElement("li");
+            li.textContent = vote.playerName + ": " + vote.card;
+            votesList.appendChild(li);
+        });
+
+        // Disable voting buttons
+        document.querySelectorAll(".card-btn").forEach(function (btn) {
+            btn.disabled = true;
+        });
+    });
+
+    // Handle player updates
+    connection.on("UpdatePlayerList", function (players) {
+        // Update player list if needed
+    });
+
+    function joinGame() {
+        connection.invoke("JoinGame", gameLink, playerName);
+        document.getElementById("joinForm").style.display = "none";
+        document.getElementById("waitingSection").style.display = "block";
+    }
+
+    document.getElementById("joinForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        playerName = document.getElementById("playerName").value;
+        localStorage.setItem("playerName", playerName);
+        joinGame();
+    });
+
+    document.querySelectorAll(".card-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const cardValue = this.getAttribute("data-card");
+            connection.invoke("SubmitVote", gameLink, cardValue).catch(function (err) {
+                console.error(err.toString());
+            });
+            alert("Vote submitted!");
+
+            // Disable buttons after voting
+            document.querySelectorAll(".card-btn").forEach(function (btn) {
+                btn.disabled = true;
+            });
+        });
+    });
+
+    // Handle errors
+    connection.on("Error", function (message) {
+        alert("Error: " + message);
+    });
+</script>

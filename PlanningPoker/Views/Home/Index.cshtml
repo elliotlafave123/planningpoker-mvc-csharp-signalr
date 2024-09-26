@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Create Game";
+}
+
+<h2>Create a New Planning Poker Game</h2>
+
+<form asp-action="CreateGame" method="post">
+    <div>
+        <label>Game Name:</label>
+        <input type="text" name="gameName" required />
+    </div>
+    <div>
+        <label>Include Host as Voter:</label>
+        <input type="checkbox" name="hostIsVoter" />
+    </div>
+    <button type="submit">Create Game</button>
+</form>
