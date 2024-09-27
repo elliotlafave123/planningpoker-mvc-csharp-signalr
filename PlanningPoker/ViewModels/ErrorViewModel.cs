@@ -1,4 +1,4 @@
-namespace PlanningPoker.Models
+namespace PlanningPoker.ViewModels
 {
     public class ErrorViewModel
     {
