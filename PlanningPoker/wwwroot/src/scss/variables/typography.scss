@@ -1,0 +1,37 @@
+:root {
+	// Font Families
+	--font-family-primary: "Poppins", sans-serif;
+	--font-family-secondary: "Roboto", sans-serif;
+
+	// Font Sizes
+	--font-size-xl: 24px; // Heading XL
+	--font-size-lg: 18px; // Heading L
+	--font-size-md: 15px; // Heading M
+	--font-size-sm: 12px; // Small Text
+
+	// Line Heights
+	--line-height-xl: 30px; // XL Text
+	--line-height-lg: 23px; // Large Text
+	--line-height-md: 19px; // Medium Text
+	--line-height-sm: 15px; // Small Text
+
+	// Font Weights
+	--font-weight-bold: 700;
+	--font-weight-medium: 500;
+	--font-weight-regular: 400;
+
+	// Letter Spacing
+	--letter-spacing-s: 2.4px;
+}
+
+// Dark Mode Typography
+[data-theme="dark"] {
+	--font-color-primary: var(--color-text-primary-dark);
+	--font-color-secondary: var(--color-text-secondary);
+}
+
+// Light Mode Typography
+[data-theme="light"] {
+	--font-color-primary: var(--color-text-primary-light);
+	--font-color-secondary: var(--color-neutral);
+}

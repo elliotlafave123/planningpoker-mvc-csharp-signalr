@@ -1,0 +1,17 @@
+body {
+	background-color: var(--color-background);
+	color: var(--font-color-primary);
+	font-family: var(--font-family-primary);
+}
+
+h1 {
+	font-size: var(--font-size-xl);
+	line-height: var(--line-height-xl);
+	font-weight: var(--font-weight-bold);
+}
+
+p {
+	font-size: var(--font-size-sm);
+	line-height: var(--line-height-sm);
+	color: var(--font-color-secondary);
+}
