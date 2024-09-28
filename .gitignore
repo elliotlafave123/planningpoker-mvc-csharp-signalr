@@ -3,6 +3,8 @@
 /PlanningPoker/bin
 /PlanningPoker/appsettings.Development.json
 /PlanningPoker/appsettings.json
+/PlanningPoker/node_modules
+/PlanningPoker/wwwroot/dist
 
 /PlanningPoker.Data/obj
 /PlanningPoker.Data/.vs
