@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using PlanningPoker.Data;
-using PlanningPoker.Models;
+using PlanningPoker.Interfaces;
 
 namespace PlanningPoker.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IGameService _gameService;
+        private readonly IPlayerService _playerService;
+        private readonly IVoteService _voteService;
 
-        public GameHub(ApplicationDbContext context)
+        public GameHub(IGameService gameService, IPlayerService playerService, IVoteService voteService)
         {
-            _context = context;
+            _gameService = gameService;
+            _playerService = playerService;
+            _voteService = voteService;
         }
 
         public async Task<string> GetConnectionId()
@@ -21,243 +23,93 @@ namespace PlanningPoker.Hubs
 
         public async Task JoinGame(string gameLink, string playerName)
         {
-            var game = _context.Games
-                .Include(g => g.Players)
-                .FirstOrDefault(g => g.GameLink == gameLink);
-            if (game == null)
+            try
             {
-                await Clients.Caller.SendAsync("Error", "Game not found.");
-                return;
-            }
+                await _playerService.JoinGameAsync(gameLink, playerName, Context.ConnectionId);
+                await Groups.AddToGroupAsync(Context.ConnectionId, gameLink);
 
-            int maxPlayers = game.HostIsVoter ? 10 : 9;
-            if (game.Players.Count >= maxPlayers)
+                var players = await _playerService.GetPlayersInGameAsync(gameLink);
+                var playerNames = players.Select(p => new { p.Name }).ToList();
+
+                await Clients.Group(gameLink).SendAsync("UpdatePlayerList", playerNames);
+            }
+            catch (Exception ex)
             {
-                await Clients.Caller.SendAsync("Error", "Game is full.");
-                return;
+                await Clients.Caller.SendAsync("Error", ex.Message);
             }
-
-            // Check if the player already exists by name
-            var existingPlayer = game.Players.FirstOrDefault(p => p.Name == playerName);
-            if (existingPlayer != null)
-            {
-                existingPlayer.ConnectionId = Context.ConnectionId;
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                var player = new Player
-                {
-                    ConnectionId = Context.ConnectionId,
-                    Name = playerName,
-                    GameId = game.Id,
-                    IsHost = false
-                };
-
-                _context.Players.Add(player);
-                await _context.SaveChangesAsync();
-            }
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, gameLink);
-
-            var players = game.Players.Select(p => new { p.Name }).ToList();
-            await Clients.Group(gameLink).SendAsync("UpdatePlayerList", players);
         }
 
-        public async Task JoinGameAsHost(string gameLink)
-        {
-            var game = _context.Games
-                .Include(g => g.Players)
-                .FirstOrDefault(g => g.GameLink == gameLink);
-            if (game == null)
-            {
-                await Clients.Caller.SendAsync("Error", "Game not found.");
-                return;
-            }
-
-            var hostPlayer = game.Players.FirstOrDefault(p => p.IsHost);
-            if (hostPlayer == null)
-            {
-                var player = new Player
-                {
-                    ConnectionId = Context.ConnectionId,
-                    Name = "Host",
-                    GameId = game.Id,
-                    IsHost = true
-                };
-
-                _context.Players.Add(player);
-            }
-            else
-            {
-                hostPlayer.ConnectionId = Context.ConnectionId;
-            }
-
-            await _context.SaveChangesAsync();
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, gameLink);
-
-            var players = game.Players.Select(p => new { p.Name }).ToList();
-            await Clients.Group(gameLink).SendAsync("UpdatePlayerList", players);
-        }
         public async Task SubmitVote(string gameLink, string cardValue)
         {
-            var game = _context.Games
-                .Include(g => g.Players)
-                .Include(g => g.Votes)
-                .FirstOrDefault(g => g.GameLink == gameLink);
+            try
+            {
+                await _voteService.SubmitVoteAsync(gameLink, cardValue, Context.ConnectionId);
 
-            if (game == null || !game.IsRoundActive)
-            {
-                await Clients.Caller.SendAsync("Error", "No active round to vote on.");
-                return;
-            }
+                var player = await _playerService.GetPlayerByConnectionIdAsync(Context.ConnectionId);
 
-            var player = game.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId);
-            if (player == null)
-            {
-                await Clients.Caller.SendAsync("Error", "Player not found in the game.");
-                return;
-            }
+                // Notify clients that the player has voted
+                await Clients.Group(gameLink).SendAsync("PlayerVoted", player.Name);
 
-            // Check if the player has already voted
-            var existingVote = game.Votes.FirstOrDefault(v => v.PlayerId == player.Id);
-            if (existingVote != null)
-            {
-                existingVote.Card = cardValue;
-            }
-            else
-            {
-                var vote = new Vote
+                // Check if all players have voted
+                var players = await _playerService.GetPlayersInGameAsync(gameLink);
+                var votes = await _voteService.GetVotesInGameAsync(gameLink);
+
+                if (votes.Count >= players.Count)
                 {
-                    Card = cardValue,
-                    PlayerId = player.Id,
-                    GameId = game.Id
-                };
-                _context.Votes.Add(vote);
+                    await _gameService.EndRoundAsync(gameLink, Context.ConnectionId);
+
+                    var voteResults = votes.Select(v => new { playerName = v.Player.Name, card = v.Card }).ToList();
+                    await Clients.Group(gameLink).SendAsync("VotesRevealed", voteResults);
+                }
             }
-
-            await _context.SaveChangesAsync();
-
-            // Notify clients that the player has voted
-            await Clients.Group(gameLink).SendAsync("PlayerVoted", player.Name);
-
-            // Check if all players have voted
-            var totalPlayers = game.Players.Count;
-            var totalVotes = game.Votes.Count;
-
-            if (totalVotes >= totalPlayers)
+            catch (Exception ex)
             {
-                game.IsRoundActive = false;
-                await _context.SaveChangesAsync();
-
-                // Reveal votes to all clients
-                var votes = game.Votes
-                    .Select(v => new { playerName = v.Player.Name, card = v.Card })
-                    .ToList();
-
-                await Clients.Group(gameLink).SendAsync("VotesRevealed", votes);
+                await Clients.Caller.SendAsync("Error", ex.Message);
             }
         }
 
         public async Task StartRound(string gameLink, string roundName)
         {
-            var game = _context.Games
-                .Include(g => g.Players)
-                .FirstOrDefault(g => g.GameLink == gameLink);
-
-            if (game != null)
+            try
             {
-                var player = game.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId);
-                if (player != null && player.IsHost)
-                {
-                    game.IsRoundActive = true;
-                    game.RoundName = roundName;
-                    _context.Votes.RemoveRange(game.Votes);
-                    await _context.SaveChangesAsync();
-
-                    await Clients.Group(gameLink).SendAsync("RoundStarted", roundName);
-                }
-                else
-                {
-                    await Clients.Caller.SendAsync("Error", "You are not authorized to start the round.");
-                }
+                await _gameService.StartRoundAsync(gameLink, roundName, Context.ConnectionId);
+                await Clients.Group(gameLink).SendAsync("RoundStarted", roundName);
+            }
+            catch (Exception ex)
+            {
+                await Clients.Caller.SendAsync("Error", ex.Message);
             }
         }
 
         public async Task EndRound(string gameLink)
         {
-            var game = _context.Games
-                .Include(g => g.Players)
-                .Include(g => g.Votes)
-                .FirstOrDefault(g => g.GameLink == gameLink);
-
-            if (game != null)
+            try
             {
-                var player = game.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId);
-                if (player != null && player.IsHost)
-                {
-                    game.IsRoundActive = false;
-                    await _context.SaveChangesAsync();
+                await _gameService.EndRoundAsync(gameLink, Context.ConnectionId);
 
-                    // Reveal votes to all clients
-                    var votes = game.Votes
-                        .Select(v => new { playerName = v.Player.Name, card = v.Card })
-                        .ToList();
+                var votes = await _voteService.GetVotesInGameAsync(gameLink);
+                var voteResults = votes.Select(v => new { playerName = v.Player.Name, card = v.Card }).ToList();
 
-                    await Clients.Group(gameLink).SendAsync("VotesRevealed", votes);
-                }
-                else
-                {
-                    await Clients.Caller.SendAsync("Error", "You are not authorized to end the round.");
-                }
+                await Clients.Group(gameLink).SendAsync("VotesRevealed", voteResults);
             }
-        }
-
-        public async Task ResetVotes(string gameLink)
-        {
-            var game = _context.Games
-                .Include(g => g.Players)
-                .Include(g => g.Votes)
-                .FirstOrDefault(g => g.GameLink == gameLink);
-
-            if (game != null)
+            catch (Exception ex)
             {
-                var player = game.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId);
-                if (player != null && player.IsHost)
-                {
-                    _context.Votes.RemoveRange(game.Votes);
-                    game.IsRoundActive = false;
-                    await _context.SaveChangesAsync();
-
-                    // Notify clients to reset votes
-                    await Clients.Group(gameLink).SendAsync("VotesReset");
-                }
-                else
-                {
-                    await Clients.Caller.SendAsync("Error", "You are not authorized to reset votes.");
-                }
+                await Clients.Caller.SendAsync("Error", ex.Message);
             }
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var player = _context.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId);
+            var player = await _playerService.GetPlayerByConnectionIdAsync(Context.ConnectionId);
             if (player != null)
             {
                 var gameLink = player.Game.GameLink;
-                _context.Players.Remove(player);
-                await _context.SaveChangesAsync();
+                await _playerService.RemovePlayerAsync(Context.ConnectionId);
 
-                var game = _context.Games
-                    .Include(g => g.Players)
-                    .FirstOrDefault(g => g.GameLink == gameLink);
+                var players = await _playerService.GetPlayersInGameAsync(gameLink);
+                var playerNames = players.Select(p => new { p.Name }).ToList();
 
-                if (game != null)
-                {
-                    var players = game.Players.Select(p => new { p.Name }).ToList();
-                    await Clients.Group(gameLink).SendAsync("UpdatePlayerList", players);
-                }
+                await Clients.Group(gameLink).SendAsync("UpdatePlayerList", playerNames);
             }
 
             await base.OnDisconnectedAsync(exception);

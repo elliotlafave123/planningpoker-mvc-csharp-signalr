@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PlanningPoker.Models\PlanningPoker.Models.csproj" />
+  </ItemGroup>
+
 </Project>
