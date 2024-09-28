@@ -1,6 +1,8 @@
 /PlanningPoker/obj
 /PlanningPoker/.vs
 /PlanningPoker/bin
+/PlanningPoker/appsettings.Development.json
+/PlanningPoker/appsettings.json
 
 /PlanningPoker.Data/obj
 /PlanningPoker.Data/.vs
