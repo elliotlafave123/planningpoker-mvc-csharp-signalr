@@ -1,6 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
 	// Function to set the theme based on the user's preference or local storage
 	const setTheme = (theme) => {
+		const darkModeLogo = document.getElementById("darkModeLogo");
+		const lightModeLogo = document.getElementById("lightModeLogo");
+
+		if (theme === "light") {
+			darkModeLogo.style.display = "none";
+			lightModeLogo.style.display = "block";
+		} else {
+			darkModeLogo.style.display = "block";
+			lightModeLogo.style.display = "none";
+		}
+
 		document.documentElement.setAttribute("data-theme", theme);
 		localStorage.setItem("theme", theme); // Store the user's preference in local storage
 	};

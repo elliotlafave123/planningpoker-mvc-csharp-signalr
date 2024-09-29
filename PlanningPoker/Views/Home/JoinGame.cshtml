@@ -4,7 +4,6 @@
     ViewData["Title"] = Model.Name;
 }
 
-<!-- Copy Box -->
 <div class="c-copy-box">
     <input type="text" value="@Url.Action("JoinGame", "Home", new { gameLink = Model.GameLink }, ViewContext.HttpContext.Request.Scheme)" class="c-copy-box__input" id="gameLinkInput" readonly />
     <button class="c-copy-box__button">
@@ -14,21 +13,19 @@
 
 <div class="l-game">
     <div>
-        <!-- Join Form Section (Hidden initially if player name is set) -->
-        <form id="joinForm" style="display: none;">
-            <div>
-                <label>Your Name:</label>
-                <input type="text" id="playerName" required />
+        <form class="c-form" id="joinForm" style="display: none;">
+            <h3>Join game</h3>
+            <div class="c-form-element">
+                <label class="u-sr-only">Your Name:</label>
+                <input class="c-text-input" placeholder="John Doe..." type="text" id="playerName" required />
             </div>
-            <button type="submit">Join Game</button>
+            <button class="c-button c-button--full-width" type="submit">Join Game</button>
         </form>
 
-        <!-- Waiting Section -->
         <div id="waitingSection" style="display: none;">
             <h3>Waiting for the host to start the round...</h3>
         </div>
 
-        <!-- Voting Section -->
         <div id="votingSection" style="display: none;">
             <h3><span id="roundName"></span></h3>
             <div class="c-card-grid" id="cards">
@@ -44,14 +41,11 @@
         </div>
     </div>
 
-    <!-- Player List Section -->
     <div class="c-players-list" id="playerListSection" style="display: none;">
         <h3 class="c-players-list__header">Players:</h3>
         <ul class="c-players-list__list" id="playersList">
-            @* The player list items will be generated dynamically *@
         </ul>
     </div>
 </div>
 
-<!-- Include the compiled JavaScript file -->
 <script src="~/dist/joinGame.bundle.js"></script>
