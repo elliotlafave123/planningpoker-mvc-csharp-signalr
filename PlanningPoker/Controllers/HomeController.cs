@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PlanningPoker.Interfaces;
 
 namespace PlanningPoker.Controllers
@@ -7,11 +8,15 @@ namespace PlanningPoker.Controllers
     {
         private readonly IGameService _gameService;
         private readonly IPlayerService _playerService;
+        private readonly bool _isDevelopment;
+        private readonly string _requestScheme;
 
         public HomeController(IGameService gameService, IPlayerService playerService)
         {
             _gameService = gameService;
             _playerService = playerService;
+            _isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+            _requestScheme = _isDevelopment ? "http" : "https";
         }
 
         public IActionResult Index()
@@ -34,6 +39,8 @@ namespace PlanningPoker.Controllers
                 return NotFound("Game not found.");
             }
 
+            game.GameLink = Url.Action("JoinGame", "Home", new { gameLink = game.GameLink }, _requestScheme);
+
             return View(game);
         }
 
@@ -44,6 +51,8 @@ namespace PlanningPoker.Controllers
             {
                 return NotFound("Game not found.");
             }
+
+            game.GameLink = Url.Action("JoinGame", "Home", new { gameLink = game.GameLink }, _requestScheme);
 
             return View(game);
         }
