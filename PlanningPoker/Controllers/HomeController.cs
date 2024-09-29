@@ -20,9 +20,9 @@ namespace PlanningPoker.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGame(string gameName, bool hostIsVoter)
+        public async Task<IActionResult> CreateGame(string gameName)
         {
-            var game = await _gameService.CreateGameAsync(gameName, hostIsVoter);
+            var game = await _gameService.CreateGameAsync(gameName);
             return RedirectToAction("GameLobby", new { gameLink = game.GameLink });
         }
 

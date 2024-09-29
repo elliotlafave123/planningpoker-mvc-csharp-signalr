@@ -1,0 +1,11 @@
+.c-form-element {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 16px;
+	min-width: 350px;
+
+	@include respond(phone) {
+		min-width: 100%;
+		width: 100%;
+	}
+}

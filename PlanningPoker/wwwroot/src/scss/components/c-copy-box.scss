@@ -1,0 +1,59 @@
+.c-copy-box {
+	display: flex;
+	align-items: center;
+	width: 100%;
+
+	&__input {
+		flex: 1;
+		padding: 10px 12px;
+		border: 1px solid var(--color-input-border);
+		border-radius: 4px 0 0 4px;
+		font-size: 1rem;
+		background-color: var(--color-input-background);
+		color: var(--color-text-primary);
+		transition: border-color 0.3s ease;
+		min-width: 0;
+
+		&:focus {
+			border-color: var(--color-primary);
+			outline: none;
+		}
+	}
+
+	&__button {
+		display: flex;
+		align-items: center;
+		padding: 10px 16px;
+		border: none;
+		border-radius: 0 4px 4px 0;
+		background-color: var(--color-primary);
+		color: var(--color-text-primary-dark);
+		cursor: pointer;
+		font-size: 1rem;
+		transition: background-color 0.3s ease;
+		white-space: nowrap;
+
+		&:hover {
+			background-color: var(--color-button-hover);
+		}
+
+		&:active {
+			background-color: var(--color-primary-light);
+		}
+
+		&__icon {
+			width: 16px;
+			height: 16px;
+			margin-right: 8px;
+		}
+
+		&--copied {
+			background-color: var(--color-primary-light);
+
+			&:hover,
+			&:active {
+				background-color: var(--color-primary-light);
+			}
+		}
+	}
+}

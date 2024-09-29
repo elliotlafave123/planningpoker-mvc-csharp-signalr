@@ -1,0 +1,16 @@
+.l-main {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	margin: 0 auto;
+	padding: 1.625rem;
+
+	&--centered {
+		align-items: center;
+		justify-content: center;
+	}
+
+	&--full-height {
+		height: calc(100vh - var(--header-height));
+	}
+}

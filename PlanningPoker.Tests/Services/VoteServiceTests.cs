@@ -29,7 +29,7 @@ namespace PlanningPoker.Tests.Services
         public async Task SubmitVoteAsync_ShouldAddVote()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             game.IsRoundActive = true;
             await _context.SaveChangesAsync();
 
@@ -50,7 +50,7 @@ namespace PlanningPoker.Tests.Services
         public async Task SubmitVoteAsync_ShouldUpdateVote_IfAlreadyExists()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             game.IsRoundActive = true;
             await _context.SaveChangesAsync();
 
@@ -73,7 +73,7 @@ namespace PlanningPoker.Tests.Services
         public async Task SubmitVoteAsync_ShouldThrowException_IfNoActiveRound()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player = new Player { Name = "Player1", ConnectionId = "conn1", GameId = game.Id };
             _context.Players.Add(player);
             await _context.SaveChangesAsync();
@@ -86,7 +86,7 @@ namespace PlanningPoker.Tests.Services
         public async Task GetVotesInGameAsync_ShouldReturnVotes()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player1 = new Player { Name = "Player1", GameId = game.Id };
             var player2 = new Player { Name = "Player2", GameId = game.Id };
             var vote1 = new Vote { GameId = game.Id, PlayerId = player1.Id, Card = "3" };
@@ -108,7 +108,7 @@ namespace PlanningPoker.Tests.Services
         public async Task ResetVotesAsync_ShouldRemoveAllVotes()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var vote = new Vote { GameId = game.Id, Card = "5" };
             _context.Votes.Add(vote);
             await _context.SaveChangesAsync();

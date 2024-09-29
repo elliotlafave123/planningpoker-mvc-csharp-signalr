@@ -28,6 +28,9 @@
 
 	// White Colors
 	--color-white: #ffffff;
+
+	// Black Colors
+	--color-black: #000000;
 }
 
 // Dark Mode Colors
@@ -38,6 +41,8 @@
 	--color-button-hover: var(--color-secondary);
 	--color-input-background: var(--color-neutral);
 	--color-input-border: var(--color-neutral-light);
+	--color-dark-background: var(--color-black);
+	--color-card-active-text: var(--color-text-primary-light);
 }
 
 // Light Mode Colors
@@ -48,4 +53,6 @@
 	--color-button-hover: var(--color-primary-light);
 	--color-input-background: var(--color-neutral-lighter);
 	--color-input-border: var(--color-secondary-light);
+	--color-dark-background: var(--color-white);
+	--color-card-active-text: var(--color-text-primary-dark);
 }

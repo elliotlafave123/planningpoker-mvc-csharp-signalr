@@ -27,7 +27,7 @@ namespace PlanningPoker.Tests.Services
         public async Task JoinGameAsync_ShouldAddPlayer()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             string playerName = "Player1";
             string connectionId = "conn1";
 
@@ -45,7 +45,7 @@ namespace PlanningPoker.Tests.Services
         public async Task JoinGameAsync_ShouldUpdateConnectionId_IfPlayerExists()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             string playerName = "Player1";
             string connectionId1 = "conn1";
             string connectionId2 = "conn2";
@@ -63,7 +63,7 @@ namespace PlanningPoker.Tests.Services
         public async Task JoinGameAsync_ShouldThrowException_IfGameFull()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", false);
+            var game = await _gameService.CreateGameAsync("Test Game");
             for (int i = 0; i < 9; i++)
             {
                 _context.Players.Add(new Player { Name = $"Player{i}", GameId = game.Id });
@@ -78,7 +78,7 @@ namespace PlanningPoker.Tests.Services
         public async Task GetPlayerByConnectionIdAsync_ShouldReturnPlayer()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player = new Player { Name = "Player1", ConnectionId = "conn1", GameId = game.Id };
             _context.Players.Add(player);
             await _context.SaveChangesAsync();
@@ -95,7 +95,7 @@ namespace PlanningPoker.Tests.Services
         public async Task RemovePlayerAsync_ShouldRemovePlayer()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player = new Player { Name = "Player1", ConnectionId = "conn1", GameId = game.Id };
             _context.Players.Add(player);
             await _context.SaveChangesAsync();
@@ -112,7 +112,7 @@ namespace PlanningPoker.Tests.Services
         public async Task GetPlayersInGameAsync_ShouldReturnPlayers()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player1 = new Player { Name = "Player1", ConnectionId = "conn1", GameId = game.Id };
             var player2 = new Player { Name = "Player2", ConnectionId = "conn2", GameId = game.Id };
             _context.Players.AddRange(player1, player2);

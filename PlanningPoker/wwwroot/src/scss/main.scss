@@ -1,6 +1,28 @@
 // variables
 @import "./variables/colours";
+@import "./variables/breakpoints";
 @import "./variables/typography";
+@import "./variables/sizes";
+
+// mixins
+@import "./mixins/respond";
+
+// components
+@import "./components/c-copy-box";
+@import "./components/c-button";
+@import "./components/c-card";
+@import "./components/c-form";
+@import "./components/c-form-element";
+@import "./components/c-players-list";
+@import "./components/c-header";
+@import "./components/c-text-input";
+
+// layout
+@import "./layouts/l-main";
+@import "./layouts/l-game";
 
 // base
 @import "base.scss";
+
+// utilities
+@import "utilities/utility-classes.scss";

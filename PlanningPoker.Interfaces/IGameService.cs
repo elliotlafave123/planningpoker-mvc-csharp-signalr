@@ -4,7 +4,7 @@ namespace PlanningPoker.Interfaces
 {
     public interface IGameService
     {
-        Task<Game> CreateGameAsync(string gameName, bool hostIsVoter);
+        Task<Game> CreateGameAsync(string gameName);
         Task<Game> GetGameByLinkAsync(string gameLink);
         Task StartRoundAsync(string gameLink, string roundName, string connectionId);
         Task EndRoundAsync(string gameLink, string connectionId);

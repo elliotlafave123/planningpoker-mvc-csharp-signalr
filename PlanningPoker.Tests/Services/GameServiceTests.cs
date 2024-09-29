@@ -29,7 +29,7 @@ namespace PlanningPoker.Tests.Services
             bool hostIsVoter = true;
 
             // Act
-            var game = await _gameService.CreateGameAsync(gameName, hostIsVoter);
+            var game = await _gameService.CreateGameAsync(gameName);
 
             // Assert
             Assert.NotNull(game);
@@ -43,7 +43,7 @@ namespace PlanningPoker.Tests.Services
         public async Task GetGameByLinkAsync_ShouldReturnGame()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
 
             // Act
             var retrievedGame = await _gameService.GetGameByLinkAsync(game.GameLink);
@@ -57,7 +57,7 @@ namespace PlanningPoker.Tests.Services
         public async Task StartRoundAsync_ShouldStartRound_WhenHost()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player = new Player { Name = "Host", IsHost = true, ConnectionId = "host-connection", GameId = game.Id };
             _context.Players.Add(player);
             await _context.SaveChangesAsync();
@@ -75,7 +75,7 @@ namespace PlanningPoker.Tests.Services
         public async Task StartRoundAsync_ShouldThrowException_WhenNotHost()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player = new Player { Name = "Player", IsHost = false, ConnectionId = "player-connection", GameId = game.Id };
             _context.Players.Add(player);
             await _context.SaveChangesAsync();
@@ -88,7 +88,7 @@ namespace PlanningPoker.Tests.Services
         public async Task EndRoundAsync_ShouldEndRound_WhenHost()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player = new Player { Name = "Host", IsHost = true, ConnectionId = "host-connection", GameId = game.Id };
             game.IsRoundActive = true;
             _context.Players.Add(player);
@@ -106,7 +106,7 @@ namespace PlanningPoker.Tests.Services
         public async Task ResetVotesAsync_ShouldResetVotes_WhenHost()
         {
             // Arrange
-            var game = await _gameService.CreateGameAsync("Test Game", true);
+            var game = await _gameService.CreateGameAsync("Test Game");
             var player = new Player { Name = "Host", IsHost = true, ConnectionId = "host-connection", GameId = game.Id };
             var vote = new Vote { GameId = game.Id, PlayerId = player.Id, Card = "5" };
             _context.Players.Add(player);
