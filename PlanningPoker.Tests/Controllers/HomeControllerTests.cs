@@ -34,12 +34,11 @@ namespace PlanningPoker.Tests.Controllers
         {
             // Arrange
             string gameName = "Test Game";
-            bool hostIsVoter = true;
             var game = new Game { GameLink = "testlink" };
-            _mockGameService.Setup(s => s.CreateGameAsync(gameName, hostIsVoter)).ReturnsAsync(game);
+            _mockGameService.Setup(s => s.CreateGameAsync(gameName)).ReturnsAsync(game);
 
             // Act
-            var result = await _controller.CreateGame(gameName, hostIsVoter) as RedirectToActionResult;
+            var result = await _controller.CreateGame(gameName) as RedirectToActionResult;
 
             // Assert
             Assert.NotNull(result);

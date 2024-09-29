@@ -7,5 +7,6 @@ namespace PlanningPoker.Interfaces
         Task SubmitVoteAsync(string gameLink, string cardValue, string connectionId);
         Task<List<Vote>> GetVotesInGameAsync(string gameLink);
         Task ResetVotesAsync(string gameLink);
+        Task<bool> HasPlayerVotedAsync(string gameLink, int playerId);
     }
 }

@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public string GameLink { get; set; }
-        public bool HostIsVoter { get; set; }
+        public bool HostIsVoter { get; set; } = false;
         public bool IsRoundActive { get; set; }
         public string? RoundName { get; set; }
 

@@ -4,13 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PlanningPoker</title>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/styles.bundle.css" />
+    <link rel="stylesheet" href="~/dist/styles.bundle.css" />
 </head>
 <body>
-    @RenderBody()
+    <partial name="_Header" />
+
+    <main class="l-main l-main--centered l-main--full-height">
+        @RenderBody()
+    </main>
      
-    <script src="~/app.bundle.js"></script>
+    <script src="~/dist/app.bundle.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -14,12 +14,11 @@ namespace PlanningPoker.Services
             _context = context;
         }
 
-        public async Task<Game> CreateGameAsync(string gameName, bool hostIsVoter)
+        public async Task<Game> CreateGameAsync(string gameName)
         {
             var game = new Game
             {
                 Name = gameName,
-                HostIsVoter = hostIsVoter,
                 GameLink = GenerateGameLink(),
                 IsRoundActive = false,
                 Players = new List<Player>(),
@@ -45,9 +44,6 @@ namespace PlanningPoker.Services
             var game = await GetGameByLinkAsync(gameLink);
             if (game == null) throw new Exception("Game not found.");
 
-            var player = game.Players.FirstOrDefault(p => p.ConnectionId == connectionId && p.IsHost);
-            if (player == null) throw new Exception("Unauthorized.");
-
             game.IsRoundActive = true;
             game.RoundName = roundName;
 
@@ -60,9 +56,6 @@ namespace PlanningPoker.Services
         {
             var game = await GetGameByLinkAsync(gameLink);
             if (game == null) throw new Exception("Game not found.");
-
-            var player = game.Players.FirstOrDefault(p => p.ConnectionId == connectionId && p.IsHost);
-            if (player == null) throw new Exception("Unauthorized.");
 
             game.IsRoundActive = false;
 

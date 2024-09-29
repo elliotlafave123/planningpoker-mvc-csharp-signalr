@@ -1,17 +1,14 @@
 ﻿@{
-    ViewData["Title"] = "Create Game";
+    ViewData["Title"] = "Homepage";
 }
 
-<h2>Create a New Planning Poker Game</h2>
+<form class="c-form" asp-action="CreateGame" method="post">
+    <h3>Create a new game</h3>
 
-<form asp-action="CreateGame" method="post">
-    <div>
-        <label>Game Name:</label>
-        <input type="text" name="gameName" required />
+    <div class="c-form-element">
+        <label class="u-sr-only">Game name</label>
+        <input class="c-text-input" type="text" name="gameName" placeholder="Sprint 7..." required />
     </div>
-    <div>
-        <label>Include Host as Voter:</label>
-        <input type="checkbox" name="hostIsVoter" />
-    </div>
-    <button type="submit">Create Game</button>
+
+    <button class="c-button c-button--full-width" type="submit">Create game</button>
 </form>

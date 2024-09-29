@@ -6,9 +6,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
 	mode: "development",
 	entry: {
-		app: "./wwwroot/src/js/index.js",
-		joinGame: "./wwwroot/src/js/joinGame.js",
-		gameLobby: "./wwwroot/src/js/gameLobby.js",
+		app: ["./wwwroot/src/js/index.js", "./wwwroot/src/js/darkMode/darkMode.js"],
+		joinGame: ["./wwwroot/src/js/joinGame.js", "./wwwroot/src/js/components/copyBox.js"],
+		gameLobby: ["./wwwroot/src/js/gameLobby.js", "./wwwroot/src/js/components/copyBox.js"],
 		styles: "./wwwroot/src/scss/main.scss",
 	},
 	output: {

@@ -69,5 +69,10 @@ namespace PlanningPoker.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> HasPlayerVotedAsync(string gameLink, int playerId)
+        {
+            return await _context.Votes.AnyAsync(v => v.Game.GameLink == gameLink && v.PlayerId == playerId);
+        }
     }
 }

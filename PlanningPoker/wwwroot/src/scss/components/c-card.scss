@@ -1,0 +1,45 @@
+.c-card {
+	&-button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		min-height: 194px;
+		max-width: 146px;
+		background-color: var(--color-input-border);
+		border: none;
+		color: var(--color-text-primary-dark);
+		cursor: pointer;
+		font-size: 1rem;
+		transition: background-color 0.3s ease;
+		white-space: nowrap;
+
+		&:hover {
+			background-color: var(--color-primary);
+		}
+
+		&:active {
+			background-color: var(--color-secondary);
+			color: var(--color-card-active-text);
+		}
+
+		&:disabled:not(.c-card-button--selected) {
+			opacity: 0.5;
+
+			&:hover {
+				background-color: var(--color-input-border);
+			}
+		}
+
+		&--selected {
+			background-color: var(--color-primary);
+			color: var(--color-card-active-text);
+		}
+	}
+
+	&-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(146px, 1fr));
+		grid-gap: 20px;
+	}
+}

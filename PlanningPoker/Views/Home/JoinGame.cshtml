@@ -1,45 +1,57 @@
 ﻿@model PlanningPoker.Models.Game
 
 @{
-    ViewData["Title"] = "Join Game";
+    ViewData["Title"] = Model.Name;
 }
 
-<h2>Join Game: @Model.Name</h2>
+<!-- Copy Box -->
+<div class="c-copy-box">
+    <input type="text" value="@Url.Action("JoinGame", "Home", new { gameLink = Model.GameLink }, ViewContext.HttpContext.Request.Scheme)" class="c-copy-box__input" id="gameLinkInput" readonly />
+    <button class="c-copy-box__button">
+        <img src="~/img/icons/copy.svg" class="c-copy-box__button__icon" alt="Copy Icon" /><span>Copy</span>
+    </button>
+</div>
 
-<form id="joinForm">
+<div class="l-game">
     <div>
-        <label>Your Name:</label>
-        <input type="text" id="playerName" required />
+        <!-- Join Form Section (Hidden initially if player name is set) -->
+        <form id="joinForm" style="display: none;">
+            <div>
+                <label>Your Name:</label>
+                <input type="text" id="playerName" required />
+            </div>
+            <button type="submit">Join Game</button>
+        </form>
+
+        <!-- Waiting Section -->
+        <div id="waitingSection" style="display: none;">
+            <h3>Waiting for the host to start the round...</h3>
+        </div>
+
+        <!-- Voting Section -->
+        <div id="votingSection" style="display: none;">
+            <h3><span id="roundName"></span></h3>
+            <div class="c-card-grid" id="cards">
+                <button class="c-card-button" data-card="1">1</button>
+                <button class="c-card-button" data-card="2">2</button>
+                <button class="c-card-button" data-card="3">3</button>
+                <button class="c-card-button" data-card="5">5</button>
+                <button class="c-card-button" data-card="8">8</button>
+                <button class="c-card-button" data-card="13">13</button>
+                <button class="c-card-button" data-card="20">20</button>
+                <button class="c-card-button" data-card="coffee">Coffee</button>
+            </div>
+        </div>
     </div>
-    <button type="submit">Join Game</button>
-</form>
 
-<div id="waitingSection" style="display:none;">
-    <h3>Waiting for the host to start the round...</h3>
-</div>
-
-<div id="votingSection" style="display:none;">
-    <h3>Round: <span id="roundName"></span></h3>
-    <h3>Choose Your Card:</h3>
-    <div id="cards">
-        <button class="card-btn" data-card="1">1</button>
-        <button class="card-btn" data-card="2">2</button>
-        <button class="card-btn" data-card="3">3</button>
-        <button class="card-btn" data-card="5">5</button>
-        <button class="card-btn" data-card="8">8</button>
-        <button class="card-btn" data-card="13">13</button>
-        <button class="card-btn" data-card="20">20</button>
-        <button class="card-btn" data-card="coffee">Coffee</button>
+    <!-- Player List Section -->
+    <div class="c-players-list" id="playerListSection" style="display: none;">
+        <h3 class="c-players-list__header">Players:</h3>
+        <ul class="c-players-list__list" id="playersList">
+            @* The player list items will be generated dynamically *@
+        </ul>
     </div>
 </div>
 
-<div id="votedPlayersSection">
-    <h3>Players Who Have Voted:</h3>
-    <ul id="votedPlayersList"></ul>
-</div>
-
-
-<h3>Votes:</h3>
-<ul id="votesList"></ul>
-
+<!-- Include the compiled JavaScript file -->
 <script src="~/dist/joinGame.bundle.js"></script>

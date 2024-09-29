@@ -1,0 +1,26 @@
+body {
+	background-color: var(--color-background);
+	color: var(--font-color-primary);
+	font-family: var(--font-family-primary);
+	margin: 0;
+}
+
+h1 {
+	font-size: var(--font-size-xl);
+	line-height: var(--line-height-xl);
+	font-weight: var(--font-weight-bold);
+
+	@include respond(tablet) {
+		font-size: var(--font-size-xl-tablet);
+	}
+
+	@include respond(phone) {
+		font-size: var(--font-size-xl-mobile);
+	}
+}
+
+p {
+	font-size: var(--font-size-md);
+	line-height: var(--line-height-sm);
+	color: var(--font-color-secondary);
+}

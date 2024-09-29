@@ -1,0 +1,32 @@
+.c-button {
+	display: flex;
+	align-items: center;
+	padding: 10px 16px;
+	border: none;
+	border-radius: 4px;
+	background-color: var(--color-primary);
+	color: var(--color-text-primary-dark);
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+	white-space: nowrap;
+
+	&:hover {
+		background-color: var(--color-primary-light);
+	}
+
+	&:active {
+		background-color: var(--color-button-hover);
+	}
+
+	&__icon {
+		width: 16px;
+		height: 16px;
+		margin-right: 8px;
+	}
+
+	&--full-width {
+		width: 100%;
+		justify-content: center;
+	}
+}
