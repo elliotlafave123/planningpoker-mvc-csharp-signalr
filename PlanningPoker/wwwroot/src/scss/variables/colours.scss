@@ -42,7 +42,10 @@
 	--color-input-background: var(--color-neutral);
 	--color-input-border: var(--color-neutral-light);
 	--color-dark-background: var(--color-black);
+	--color-card-text: var(--color-text-primary-dark);
 	--color-card-active-text: var(--color-text-primary-light);
+	--color-header-border: var(--color-neutral-light);
+	--color-players-list-header-text: var(--color-text-primary-dark);
 }
 
 // Light Mode Colors
@@ -54,5 +57,8 @@
 	--color-input-background: var(--color-neutral-lighter);
 	--color-input-border: var(--color-secondary-light);
 	--color-dark-background: var(--color-white);
+	--color-card-text: var(--color-text-primary-light);
 	--color-card-active-text: var(--color-text-primary-dark);
+	--color-header-border: var(--color-secondary-light);
+	--color-players-list-header-text: var(--color-text-primary-light);
 }
