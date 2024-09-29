@@ -5,7 +5,7 @@
 }
 
 <div class="c-copy-box">
-    <input type="text" value="@Url.Action("JoinGame", "Home", new { gameLink = Model.GameLink }, ViewContext.HttpContext.Request.Scheme)" class="c-copy-box__input" id="gameLinkInput" readonly />
+    <input type="text" value="@Model.GameLink" class="c-copy-box__input" id="gameLinkInput" readonly />
     <button class="c-copy-box__button">
         <img src="~/img/icons/copy.svg" class="c-copy-box__button__icon" alt="Copy Icon" /><span>Copy</span>
     </button>
